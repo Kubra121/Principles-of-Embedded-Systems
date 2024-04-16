@@ -1,0 +1,56 @@
+// Define pin numbers
+const int buzzerPin = 8; // Buzzer connected to digital pin 8
+const int buttonPin = 2; // Push-button connected to digital pin 2
+const int SOUND_DURATION = 500; // Duration for each sound
+const int SILENCE_DURATION = 50; // Duration between sounds
+int melody[] = {1, 1, 5, 5, 6, 6, 5, 0, 4, 4, 3, 3, 2, 2, 1}; // Melody
+int melody2[] = {6, 6, 6, 5, 6, 8, 8, 8, 6, 8, 8, 8, 6, 5, 4, 2, 6, 6, 6, 5, 6, 8, 8, 8, 6, 8, 8, 8, 6, 5, 4, 2};
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP); // Enable internal pull-up resistor for button
+}
+
+void loop() {
+  // Check if the button is pressed
+  if (digitalRead(buttonPin) == LOW) {
+    // Play the melody
+    playMelody();
+    // Wait for button release
+    while (digitalRead(buttonPin) == LOW) {
+      delay(10); // Debouncing delay
+    }
+  }
+}
+
+// Function to play the melody
+void playMelody() {
+  for (int i = 0; i < sizeof(melody) / sizeof(melody[0]); i++) {
+    int note = melody[i];
+    if (note == 0) {
+      // Pause if note is 0
+      delay(SILENCE_DURATION);
+    } else {
+      // Play the note
+      tone(buzzerPin, noteToFrequency(note), SOUND_DURATION);
+      delay(SOUND_DURATION);
+      noTone(buzzerPin);
+      delay(SILENCE_DURATION);
+    }
+  }
+}
+
+// Function to convert note number to frequency
+int noteToFrequency(int note) {
+  switch (note) {
+    case 1: return 262; // C (Do)
+    case 2: return 294; // D (Re)
+    case 3: return 330; // E (Mi)
+    case 4: return 349; // F (Fa)
+    case 5: return 392; // G (Sol)
+    case 6: return 440; // A (La)
+    case 7: return 494; // B (Si)
+    case 8: return 523; // C (High Do)
+    default: return 0;
+  }
+}
