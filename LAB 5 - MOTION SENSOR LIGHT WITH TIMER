@@ -1,0 +1,88 @@
+int led = 3;
+int pir = 2;
+int state = LOW;
+int val = 0;
+int TIMER_START = 30;
+int TIMER_SPEED = 250;
+int ANIMATION_SPEED = 200;
+int x,y,z;
+int digit[16][7] = {
+// A,B,C,D,E,F,G
+  {0,0,0,0,0,0,1}, //0
+  {1,0,0,1,1,1,1}, //1
+  {0,0,1,0,0,1,0}, //2
+  {0,0,0,0,1,1,0}, //3
+  {1,0,0,1,1,0,0}, //4
+  {0,1,0,0,1,0,0}, //5
+  {0,1,0,0,0,0,0}, //6
+  {0,0,0,1,1,0,1}, //7
+  {0,0,0,0,0,0,0}, //8
+  {0,0,0,0,1,0,0}, //9
+  {0,0,0,1,0,0,0}, //A
+  {1,1,0,0,0,0,0}, //b
+  {0,1,1,0,0,0,1}, //C
+  {1,0,0,0,0,1,0}, //d
+  {0,1,1,0,0,0,0}, //E
+  {0,1,1,1,0,0,0}  //F
+};
+int animation[8][7] = {
+  {1,1,1,1,1,0,1},//F
+  {1,1,1,1,1,1,0},//G
+  {1,1,0,1,1,1,1},//C
+  {1,1,1,0,1,1,1},//D
+  {1,1,1,1,0,1,1},//E
+  {1,1,1,1,1,1,0},//G
+  {1,0,1,1,1,1,1},//B
+  {0,1,1,1,1,1,1},//A 
+};   
+
+void setup() {
+  pinMode(led, OUTPUT);
+  pinMode(pir, INPUT);
+  for(x=4;x<=10;x++){
+    pinMode(x,OUTPUT);
+  }
+  for(z=0; z<=6; z++){
+      digitalWrite(z+4,1);
+    }
+
+  Serial.begin(9600);
+
+}
+
+void loop() {
+  val = digitalRead(pir);   // read sensor value
+  Serial.print(val);
+  if (val == HIGH) { 
+    val=LOW;          // check if the sensor is HIGH
+    digitalWrite(led, HIGH);   // turn LED ON
+    delay(200); 
+    for(z=0; z<=6; z++){
+        digitalWrite(z+4,1);
+      }               // delay 200 milliseconds 
+    for(y=TIMER_START = 30; y>=0; y--){
+    // Loop z will continue for 8 segment display high or low
+      if(y>16){
+        for(z=0; z<=6; z++){
+        digitalWrite(z+4,animation[y%8][z]);
+        }
+        delay(ANIMATION_SPEED = 200);
+      }
+      else {
+        for(z=0; z<=6; z++){
+        digitalWrite(z+4,digit[y][z]);
+        }
+        delay(TIMER_SPEED);
+      }
+    }
+    for(z=0; z<=6; z++){
+        digitalWrite(z+4,1);
+      }
+  }
+  else {
+      digitalWrite(led, LOW); // turn LED OFF
+      delay(200);             // delay 200 milliseconds 
+      
+  }
+  
+}
