@@ -1,0 +1,42 @@
+// Specify all the LED pins in an array
+int ledPin[] = {7, 6, 5, 4, 3};
+int INCREMENT_VALUE = 7; // Increment value for the LED counter
+int WAIT_TIME = 500; // Wait time between counting operations (milliseconds)
+
+void setup()
+{
+  for(int i = 0; i < 5; i++)
+  { // Set the pin mode of all of the LED pins to output
+    pinMode(ledPin[i], OUTPUT);
+  }
+}
+
+void loop()
+{ 
+  // For loop counts up to 32, max number of 5 bits
+  for(byte counter = 0; counter <40; counter += INCREMENT_VALUE) 
+  { 
+    // Take the modulus of counter with respect to 32
+    counter %= 32;
+    // Call binaryCount method
+    binaryCount(counter);
+    delay(WAIT_TIME);
+  }
+}
+
+void binaryCount(byte counter) {
+  // 5 LED pins to be checked
+  for(int i = 0; i < 5; i++) 
+  {
+    // If bit in byte is 1, set pin high
+    if(bitRead(counter, i) == 1)
+    {
+      digitalWrite(ledPin[i], HIGH);
+    }
+    // Otherwise, set pin low
+    else
+    {
+      digitalWrite(ledPin[i], LOW);
+    }
+  }
+} 
