@@ -1,0 +1,54 @@
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <dht.h>
+
+#define DHTPIN 7
+#define BUTTON_PIN 2   
+dht DHT;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+bool isEnglish = true;  
+uint8_t currentButtonState = 0; 
+uint8_t previousButtonState;   
+
+void setup() {
+  Serial.begin(9600);
+  lcd.begin();
+  pinMode(BUTTON_PIN, INPUT_PULLUP); 
+  previousButtonState = digitalRead(BUTTON_PIN); 
+}
+
+void loop() {
+  currentButtonState = digitalRead(BUTTON_PIN);
+
+  if (currentButtonState == LOW && previousButtonState == HIGH) {
+    isEnglish = !isEnglish;
+    delay(50);
+  }
+  previousButtonState = currentButtonState; 
+
+  DHT.read11(DHTPIN);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  if (isEnglish) {
+    lcd.print("TEM (F): ");
+    lcd.print(DHT.temperature * 1.8 + 32);
+    lcd.setCursor(14,0);
+    lcd.print("EN");
+    lcd.setCursor(0, 1);
+    lcd.print("HUM (%): ");
+    lcd.print(DHT.humidity);
+  } else {
+    lcd.print("SIC (C): ");
+    lcd.print(DHT.temperature);
+    lcd.setCursor(14,0);
+    lcd.print("TR");
+    lcd.setCursor(0, 1);
+    lcd.print("NEM (%): ");
+    lcd.print(DHT.humidity);
+  }
+
+  
+
+}
