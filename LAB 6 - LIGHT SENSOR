@@ -1,0 +1,51 @@
+// Define pin numbers
+const int sensorPin = A0;  // Analog pin for the light sensor
+const int ledPin = 2;     // Digital pin for the LED
+
+// Define global variables
+int LED_ACTIVATION_VALUE = 200;    // Value from sensor
+int SERIAL_OUTPUT_FREQUENCY = 1000; // Output frequency in milliseconds
+
+// Variables for storing sensor value and LED status
+int sensorValue;
+bool ledStatus = false;
+
+// Variable to store the last time output to serial monitor
+unsigned long lastSerialOutputTime = 0;
+
+void setup() {
+  // Set up serial communication
+  Serial.begin(9600);
+
+  // Set the LED pin as an output
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  // Read the sensor value
+  sensorValue = analogRead(sensorPin);
+
+  // Check if it's time to output to serial monitor
+  if (millis() - lastSerialOutputTime >= SERIAL_OUTPUT_FREQUENCY) {
+    // Print sensor value and LED status to serial monitor
+    Serial.print("LIGHT SENSOR: ");
+    Serial.println(sensorValue);
+    Serial.print("LED STATUS: ");
+    Serial.println(ledStatus ? "ON" : "OFF");
+    Serial.println();
+
+    // Update last output time
+    lastSerialOutputTime = millis();
+  }
+
+  // Check if the sensor value is below the activation threshold
+  if (sensorValue < LED_ACTIVATION_VALUE) {
+    // Turn on the LED
+    digitalWrite(ledPin, HIGH);
+    ledStatus = true;
+  } else {
+    // Turn off the LED
+    digitalWrite(ledPin, LOW);
+    ledStatus = false;
+  }
+}
